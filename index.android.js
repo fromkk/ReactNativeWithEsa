@@ -6,47 +6,94 @@
 
 var React = require('react-native');
 var {
-  AppRegistry,
-  StyleSheet,
-  Text,
-  View,
+    AppRegistry,
+    ListView,
+    StyleSheet,
+    Text,
+    View,
+    Image,
+    TouchableHighlight
 } = React;
 
-var esa = React.createClass({
-  render: function() {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.android.js
-        </Text>
-        <Text style={styles.instructions}>
-          Shake or press menu button for dev menu
-        </Text>
-      </View>
-    );
-  }
+var styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    row: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    rowText: {
+        textAlign: 'left'
+    }
 });
 
-var styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
+import Api_Teams from './app/components/api/teams';
+
+var esa = React.createClass({
+    getInitialState: function()
+    {
+        return {
+          dataSource: new ListView.DataSource({
+            rowHasChanged: (row1, row2) => row1 !== row2,
+          }),
+          loaded: false,
+        };
+    },
+    componentDidMount: function()
+    {
+        this.fetchData();
+    },
+    fetchData: function()
+    {
+        var api = new Api_Teams();
+        api.list((json) =>
+        {
+            this.setState({
+              dataSource: this.state.dataSource.cloneWithRows(json.teams),
+              loaded: true,
+            });
+        }, (error) =>
+        {
+            console.warn(error);
+        });
+    },
+    render: function()
+    {
+        if (!this.state.loaded)
+        {
+            return this.renderLoadingView();
+        }
+
+        return (<ListView dataSource={this.state.dataSource} renderRow={this.renderRow} />);
+    },
+    renderLoadingView: function()
+    {
+        return (
+            <View style={styles.container}>
+                <Text>Loading...</Text>
+            </View>);
+    },
+    renderRow: function(row)
+    {
+        return (
+            <TouchableHighlight onPress={() => this.onTappedRow(row)}>
+                <View style={styles.row}>
+                    <Image source={{uri: row.icon}} />
+                    <Text style={styles.rowText}>{row.name}</Text>
+                </View>
+            </TouchableHighlight>
+        );
+    },
+    onTappedRow: function(row)
+    {
+        console.log("tapped!!", row);
+    }
 });
 
 AppRegistry.registerComponent('esa', () => esa);
