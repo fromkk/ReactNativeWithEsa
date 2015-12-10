@@ -19,4 +19,9 @@ export default class Api_Teams extends Api
         var url = '/v1/teams/' + name;
         this.get(url, success, failure);
     }
+    members(name, page, success, failure)
+    {
+        var url = '/v1/teams/' + name + '/members' + (null === page ? '' : '?page=' + page);
+        this.get(url, success, failure);
+    }
 }

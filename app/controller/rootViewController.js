@@ -20,6 +20,7 @@ var RootView = React.createClass({
             rowHasChanged: (row1, row2) => row1 !== row2,
           }),
           loaded: false,
+          teams : []
         };
     },
     componentDidMount: function()
@@ -34,6 +35,7 @@ var RootView = React.createClass({
             this.setState({
               dataSource: this.state.dataSource.cloneWithRows(json.teams),
               loaded: true,
+              teams : json.teams
             });
         }, (error) =>
         {
@@ -69,9 +71,9 @@ var RootView = React.createClass({
     },
     onTappedRow: function(row)
     {
-        console.log("tapped!!", row);
         this.props.navigator.push({
-            id: 'teamDetail'
+            id: 'teamDetail',
+            team: row
         });
     }
 });

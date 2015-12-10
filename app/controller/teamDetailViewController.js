@@ -17,7 +17,8 @@ var TeamDetailView = React.createClass({
             <View style={styles.container}>
                 <Button onPress={() => {
                     this.props.navigator.push({
-                        id: 'membersView'
+                        id: 'membersView',
+                        team: this.props.route.team
                     });
                 }}>メンバー</Button>
             </View>

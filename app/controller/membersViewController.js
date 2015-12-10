@@ -4,10 +4,13 @@ var React = require('react-native');
 
 var {
     ListView,
-    Text
+    Text,
+    View,
+    TouchableHighlight
 } = React;
 
 var styles = require('../styles/general');
+import Api_Teams from '../components/api/teams';
 
 var MembersView = React.createClass({
     getInitialState: function()
@@ -17,11 +20,35 @@ var MembersView = React.createClass({
             rowHasChanged: (row1, row2) => row1 !== row2,
           }),
           loaded: false,
+          members: []
         };
     },
     componentDidMount: function()
     {
-        
+        this.fetchData(null);
+    },
+    fetchData: function(page)
+    {
+        var api = new Api_Teams();
+        api.members(this.props.route.team.name, page, (json) =>
+        {
+            this.setState({members: this.state.members.concat(json.members)});
+
+            if (null !== json.next_page)
+            {
+                this.fetchData(json.next_page);
+            } else
+            {
+                this.setState({
+                    dataSource: this.state.dataSource.cloneWithRows(this.state.members),
+                    loaded: true
+                });
+            }
+
+        }, (error) =>
+        {
+            console.warn(error);
+        });
     },
     renderRow: function(row)
     {
@@ -33,9 +60,18 @@ var MembersView = React.createClass({
             </TouchableHighlight>
         );
     },
+    renderLoadingView: function()
+    {
+        return (<View style={styles.container}><Text>Loading...</Text></View>);
+    },
     render: function()
     {
-        return (<ListView styles={styles.container} dataSource={this.state.dateSource} renderRow={this.renderRow} />);
+        if (!this.state.loaded)
+        {
+            return this.renderLoadingView();
+        }
+
+        return (<ListView dataSource={this.state.dataSource} renderRow={this.renderRow} />);
     }
 });
 
