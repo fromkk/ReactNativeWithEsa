@@ -17,7 +17,7 @@ var TeamDetailView = require('./app/controller/teamDetailViewController');
 var esa = React.createClass({
     render: function()
     {
-        return (<Navigator initialRoute={{name: 'esa', index: 0}} renderScene={(route, navigator) => {
+        return (<Navigator navigationBar={<Navigator.NavigationBar />} initialRoute={{name: 'esa', index: 0}} renderScene={(route, navigator) => {
             switch (route.id)
             {
                 case 'teamDetail':

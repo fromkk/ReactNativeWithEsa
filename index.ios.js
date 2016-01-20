@@ -6,48 +6,34 @@
 
 var React = require('react-native');
 var {
-  AppRegistry,
-  StyleSheet,
-  Text,
-  View,
+    AppRegistry,
+    Navigator,
+    View,
+    Text
 } = React;
 
-var esa = React.createClass({
-  render: function() {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.ios.js
-        </Text>
-        <Text style={styles.instructions}>
-          Press Cmd+R to reload,{'\n'}
-          Cmd+D or shake for dev menu
-        </Text>
-      </View>
-    );
-  }
-});
+var RootView = require('./app/controller/rootViewController');
+var MembersView = require('./app/controller/membersViewController');
+var TeamDetailView = require('./app/controller/teamDetailViewController');
 
-var styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
+var esa = React.createClass({
+    render: function()
+    {
+        return (<Navigator initialRoute={{name: 'esa', index: 0}} renderScene={(route, navigator) => {
+            switch (route.id)
+            {
+                case 'teamDetail':
+                    return (<TeamDetailView route={route} navigator={navigator} />);
+                break;
+                case 'membersView':
+                    return (<MembersView route={route} navigator={navigator} />);
+                break;
+                default:
+                    return (<RootView name={route.name} route={route} navigator={navigator} />);
+                break;
+            }
+        }}  />);
+    }
 });
 
 AppRegistry.registerComponent('esa', () => esa);
